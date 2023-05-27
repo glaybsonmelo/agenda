@@ -1,0 +1,36 @@
+<%- include("../includes/head", { title })  %> 
+<%- include("../includes/navigation")  %> 
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-2"></div>
+        <div class="col-lg-8 my-3">
+            <h1 class="text-center">Criar conta</h1>
+        </div>
+        <div class="row">
+
+            <div class="row">
+
+                <form action="/auth/signup" method="post">
+
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nome</label>
+                        <input name="name" type="text" class="form-control" aria-describedby="emailHelp">
+                      </div>
+                    <div class="mb-3">
+                      <label for="email" class="form-label">Email</label>
+                      <input name="email" type="email" class="form-control" aria-describedby="emailHelp">
+                    </div>
+                    <div class="mb-3">
+                      <label for="password" class="form-label">Senha</label>
+                      <input name="password" type="password" class="form-control" id="password">
+                    </div>
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" id="csrfToken">
+    
+                    <button type="submit" class="btn btn-primary">Criar conta</button>
+                  </form>
+        </div>
+    </div>
+    <div class="col-lg-2"></div>
+</div>
+<%- include("../includes/footer")  %> 
