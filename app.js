@@ -5,13 +5,13 @@ import { fileURLToPath } from 'url';
 import mongoose from 'mongoose';
 import session from 'express-session';
 import connectMongoSession from 'connect-mongodb-session';
-import flash from 'express-flash';
 import dotenv from 'dotenv';
 import indexRoutes from './routes/homeRoutes.js';
 import userRoutes from './routes/authRoutes.js';
 import csrf from 'csurf';
 import helmet from 'helmet';
 import errorController from './src/controllers/errorController.js';
+import flash from 'express-flash';
 
 dotenv.config();
 
@@ -50,6 +50,7 @@ app.use(csrf());
 
 app.use((req, res, next) => {
     res.locals.csrfToken = req.csrfToken();
+    res.locals.errors = req.flash("errors");
     next();
 });
 app.use(indexRoutes);

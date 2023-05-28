@@ -1,17 +1,24 @@
 import User from '../models/User.js';
 import flash from 'express-flash';
+import { validationResult } from 'express-validator';
+import validator from 'validator';
+import bcrypt from 'bcrypt';
+
+
+// import User from '../models/User.js';
 
 class userController {
 
     getLogin(req, res, next) {
         res.render('auth/login',  {
             title: "Entrar",
-            csrfToken: res.locals.csrfToken
+            csrfToken: res.locals.csrfToken,
+            isAuth: req.isAuth
         });
     }
 
     postLogin(req, res, next) {
-        res.send("");
+        res.send(req.body);
     }
 
     getSignup(req, res, next){
@@ -19,19 +26,43 @@ class userController {
         const csrfToken = res.locals.csrfToken;
         res.render('auth/signup', { 
             title: "Criar Conta",
-            csrfToken
+            csrfToken,
+            error: []
+
          });
     }
 
     async postSignup(req, res, next){
-        const { name, age } =  req.body;
-        if(!age){
-            req.flash("error", "Invalid age!");
-            return res.redirect('/auth/signup');
+
+        const errors = validationResult(req);
+        if(errors.length > 0){
+            const csrfToken = res.locals.csrfToken;
+            req.flash('errors', errors);
+            res.session.save().then(() => {
+                res.redirect('back');
+            })
+            return;
+
         }
-        const user = await User.create({name, age});
-        req.session.user = user;
-        res.redirect("/");
+
+        const { name, email, password } =  req.body;
+
+        try {
+            const salt = await bcrypt.genSalt(12);
+            const hashedPassword = await bcrypt.hash(password, salt);
+            const user = await User.create({ name, email, password: hashedPassword });
+            req.session.user = user;
+            await req.session.save()
+            res.redirect("/");
+
+        } catch (error) {
+            console.log(error);
+            next(error);
+        }
+    }
+    logout(req, res, next){
+        req.session.destroy();
+        res.redirect('/');
     }
 };
 
