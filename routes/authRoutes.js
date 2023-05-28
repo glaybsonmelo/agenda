@@ -22,4 +22,6 @@ router.post('/signup', [
         .withMessage("Senha deve ter mais que 4 caracteres")
 ], userController.postSignup);
 
+router.post('/logout', userController.logout);
+
 export default router;

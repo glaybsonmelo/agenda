@@ -1,7 +1,6 @@
 class Errors {
     get404(req, res, next) {
         res.render("errors/404", { title: 'Page not found' });
-
     }
     
     get500(error, req, res, next) {

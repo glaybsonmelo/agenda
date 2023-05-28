@@ -17,8 +17,30 @@ class userController {
         });
     }
 
-    postLogin(req, res, next) {
-        res.send(req.body);
+    async postLogin(req, res, next) {
+        const { email, password } = req.body;
+
+        try {
+            const user = await User.findOne({ email });
+            if(!user){
+                const error = new Error("Usuario não encontrado");
+                throw error;
+            }
+            const passIsCorrect = bcrypt.compare(password, user.password);
+            if(!passIsCorrect){
+                req.flash('errors', 'Senha incorreta');
+                return res.redirect("/auth/login");
+            }
+
+            req.session.isLoggedIn = true;
+            res.redirect("/");
+
+        req.session.user = user;
+
+        } catch (error) {
+            return next(error);
+        }
+
     }
 
     getSignup(req, res, next){
@@ -27,7 +49,8 @@ class userController {
         res.render('auth/signup', { 
             title: "Criar Conta",
             csrfToken,
-            error: []
+            error: [],
+            isAuthenticated: req.session.user
 
          });
     }
@@ -60,9 +83,11 @@ class userController {
             next(error);
         }
     }
-    logout(req, res, next){
-        req.session.destroy();
-        res.redirect('/');
+    async logout(req, res, next){
+        req.session.destroy(err => {
+            console.log(err);
+            res.redirect("/");
+        });
     }
 };
 
