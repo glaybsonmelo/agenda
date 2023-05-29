@@ -4,9 +4,6 @@ import { validationResult } from 'express-validator';
 import validator from 'validator';
 import bcrypt from 'bcrypt';
 
-
-// import User from '../models/User.js';
-
 class userController {
 
     getLogin(req, res, next) {
@@ -51,21 +48,17 @@ class userController {
             csrfToken,
             error: [],
             isAuthenticated: req.session.user
-
          });
     }
 
     async postSignup(req, res, next){
 
-        const errors = validationResult(req);
-        if(errors.length > 0){
-            const csrfToken = res.locals.csrfToken;
-            req.flash('errors', errors);
-            res.session.save().then(() => {
-                res.redirect('back');
-            })
-            return;
+        let errors = validationResult(req);
 
+        if(!errors.isEmpty()){      
+            errors = errors.array();
+            req.flash('errors', errors);
+            return res.redirect('back');
         }
 
         const { name, email, password } =  req.body;
@@ -79,8 +72,7 @@ class userController {
             res.redirect("/");
 
         } catch (error) {
-            console.log(error);
-            next(error);
+            return next(error);
         }
     }
     async logout(req, res, next){
