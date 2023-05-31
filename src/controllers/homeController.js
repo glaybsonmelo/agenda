@@ -1,6 +1,5 @@
 class HomeController{
     getIndex = (req, res) => {
-        console.log(req.session.user)
         res.render("index", {
             title: "Home"
         });

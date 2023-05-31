@@ -5,7 +5,17 @@ import User from "../src/models/User.js";
 const router = Router();
 
 router.get('/login', userController.getLogin);
-router.post('/login', userController.postLogin);
+router.post('/login',[
+    body("email")
+        .trim()
+        .isEmail()
+        .withMessage("Por favor, Insira um email valido!")
+        .normalizeEmail(),
+    body("password")
+        .trim()
+        .isLength({ min: 4, max: 2056 })
+        .withMessage("Senha deve ter mais que 4 caracteres.")
+], userController.postLogin);
 
 router.get('/signup', userController.getSignup);
 router.post('/signup', [

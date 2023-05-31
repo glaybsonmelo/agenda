@@ -9,31 +9,39 @@ class userController {
     getLogin(req, res, next) {
         res.render('auth/login',  {
             title: "Entrar",
-            csrfToken: res.locals.csrfToken,
-            isAuth: req.isAuth
+            csrfToken: res.locals.csrfToken
         });
     }
 
     async postLogin(req, res, next) {
         const { email, password } = req.body;
+        let errors = validationResult(req);
+
+        if(!errors.isEmpty()){
+            errors = errors.array();
+            req.flash('errors', errors);
+            return res.redirect('back');
+        }
 
         try {
             const user = await User.findOne({ email });
             if(!user){
-                const error = new Error("Usuario não encontrado");
-                throw error;
+                req.flash('errors', 'Usuário não encontrado.');
+                return res.redirect("back");
             }
-            const passIsCorrect = bcrypt.compare(password, user.password);
-            if(!passIsCorrect){
-                req.flash('errors', 'Senha incorreta');
-                return res.redirect("/auth/login");
+            const doMatch = await bcrypt.compare(password, user.password);
+            if(!doMatch){
+                req.flash('errors', 'E-mail ou senha incorretos.');
+                return res.redirect("back");
             }
-
+        
+            req.flash('success', 'Login feito com sucesso!');
             req.session.isLoggedIn = true;
+            req.session.user = user;
+
+            await req.session.save();
+
             res.redirect("/");
-
-        req.session.user = user;
-
         } catch (error) {
             return next(error);
         }
@@ -41,13 +49,10 @@ class userController {
     }
 
     getSignup(req, res, next){
-        const error = req.flash('error');
         const csrfToken = res.locals.csrfToken;
         res.render('auth/signup', { 
             title: "Criar Conta",
-            csrfToken,
-            error: [],
-            isAuthenticated: req.session.user
+            csrfToken
          });
     }
 
@@ -68,8 +73,9 @@ class userController {
             const hashedPassword = await bcrypt.hash(password, salt);
             const user = await User.create({ name, email, password: hashedPassword });
             req.session.user = user;
-            await req.session.save()
-            res.redirect("/");
+            req.flash("success", "Conta criada com sucesso!");
+            await req.session.save();
+            res.redirect("/auth/login");
 
         } catch (error) {
             return next(error);
