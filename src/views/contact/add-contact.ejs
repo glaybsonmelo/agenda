@@ -1,0 +1,40 @@
+<%- include("../includes/head")  %> 
+<%- include("../includes/navigation")  %> 
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-2"></div>
+        <div class="col-lg-8 my-3">
+            <h1 class="text-center">Adicionar contato</h1>
+        </div>
+        <div class="row">
+
+          <%- include("../includes/messages") %>
+
+            <form action="/contact/add-contact" method="post">
+                <div class="mb-3">
+                  <label for="firstName" class="form-label">Nome</label>
+                  <input name="firstName" type="text" class="form-control" id="firstName" aria-describedby="emailHelp">
+                </div>
+                <div class="mb-3">
+                    <label for="lastName" class="form-label">Sobrenome</label>
+                    <input name="lastName" type="text" class="form-control" id="firstName" aria-describedby="emailHelp">
+                  </div>
+                <div class="mb-3">
+                  <label for="email" class="form-label">E-mail</label>
+                  <input name="email" type="email" class="form-control" id="email">
+                </div>
+                <div class="mb-3">
+                  <label for="phone" class="form-label">Telefone</label>
+                  <input name="phone" type="tel" class="form-control" id="phone">
+                </div>
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" id="csrfToken">
+                
+                <button type="text" class="btn btn-primary">Adicionar</button>
+              </form>
+
+        </div>
+    </div>
+    <div class="col-lg-2"></div>
+</div>
+<%- include("../includes/footer")  %> 

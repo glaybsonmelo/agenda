@@ -26,12 +26,12 @@ class userController {
         try {
             const user = await User.findOne({ email });
             if(!user){
-                req.flash('errors', 'Usuário não encontrado.');
+                req.flash('errors', [{ msg: 'Usuário não encontrado.' }]);
                 return res.redirect("back");
             }
             const doMatch = await bcrypt.compare(password, user.password);
             if(!doMatch){
-                req.flash('errors', 'E-mail ou senha incorretos.');
+                req.flash('errors', [{ msg: 'E-mail ou senha incorretos.' }]);
                 return res.redirect("back");
             }
         

@@ -12,6 +12,7 @@ import csrf from 'csurf';
 import helmet from 'helmet';
 import errorController from './src/controllers/errorController.js';
 import flash from 'express-flash';
+import contactRoutes from './routes/contactRoutes.js'
 
 dotenv.config();
 
@@ -47,18 +48,17 @@ app.use(flash());
 // app.use(helmet())
 app.use(csrf());
 
-
 app.use((req, res, next) => {
     res.locals.csrfToken = req.csrfToken();
     res.locals.isAuthenticated = req.session.isLoggedIn
     res.locals.errors = req.flash("errors");
     res.locals.success = req.flash("success");
-
     next();
 });
 
 app.use(indexRoutes);
 app.use('/auth', userRoutes);
+app.use('/contact', contactRoutes);
 
 app.use(errorController.get404);
 app.use(errorController.get500);

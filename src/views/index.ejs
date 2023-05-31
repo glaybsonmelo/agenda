@@ -19,19 +19,20 @@
                 </div>
             <% } %> 
             <div class="responsive-table">
+                <a href="/contact/add-contact">add</a>
                 <table class="table my-3">
                     <th>
-                        <td>ID</td>
                         <td>Nome</td>
                         <td>E-mail</td>
                         <td>Telefone</td>
                     </th>
-                    <tr>
-                        <td>1</td>
-                        <td>Luiz</td>
-                        <td>Email#email.com</td>
-                        <td>Telefone</td>
-                    </tr>
+                    <% contacts.forEach(contact => { %>
+                        <tr>
+                            <td><%= contact.firstName %> <%=  contact.lastName %></td>
+                            <td><%= contact.email %></td>
+                            <td><%= contact.phone %></td>
+                        </tr>
+                    <% }) %>
                 </table>
             </div>
         </div>

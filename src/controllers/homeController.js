@@ -1,10 +1,18 @@
+import Contact from "../models/Contact.js";
+
 class HomeController{
-    getIndex = (req, res) => {
-        res.render("index", {
-            title: "Home"
-        });
+    async getIndex(req, res, next){
+        try {
+            const contacts = await Contact.find();
+            res.render("index", {
+                title: "Home",
+                contacts
+            });
+        } catch (error) {
+            next(error);
+        }
     }
-    getContacts = (req, res) => {
+    getContacts(req, res){
         res.send("<h1>Thanks for contacting</h1>");
     }
 };
